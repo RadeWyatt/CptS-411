@@ -12,6 +12,7 @@
 #include <mpi.h> 
 #include <assert.h>
 #include <sys/time.h>
+#include <math.h>
 
 int main(int argc,char *argv[])
 {
