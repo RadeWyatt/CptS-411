@@ -30,7 +30,9 @@ int main(int argc,char *argv[])
 
 
    if(rank==1) {
-		int x = 10;
+	   for (int i = 0; i < 10; i++)
+	   {
+		int x[i];
 		int dest = 0;
 		gettimeofday(&t1,NULL);
 		MPI_Send(&x,1,MPI_INT,dest,0,MPI_COMM_WORLD);
@@ -38,15 +40,19 @@ int main(int argc,char *argv[])
 		int tSend = (t2.tv_sec-t1.tv_sec)*1000 + (t2.tv_usec-t1.tv_usec)/1000;
 
 		printf("Rank=%d: sent message %d to rank %d; Send time %d millisec\n", rank,x,dest,tSend);
+	   }
    } else 
    if (rank==0) {
-   		int y=0;
+	   for (int i = 0; i < 10; i++)
+	   {
+   		int *y;
 		MPI_Status status;
 		gettimeofday(&t1,NULL);
-   		MPI_Recv(&y,1,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
+   		MPI_Recv(&*y,1,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
 		gettimeofday(&t2,NULL);
 		int tRecv = (t2.tv_sec-t1.tv_sec)*1000 + (t2.tv_usec-t1.tv_usec)/1000;
 		printf("Rank=%d: received message %d from rank %d; Recv time %d millisec\n",rank,y,status.MPI_SOURCE,tRecv);
+	   }
    }
 
    MPI_Finalize();
