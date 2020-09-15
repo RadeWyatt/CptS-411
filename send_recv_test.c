@@ -16,7 +16,7 @@
 int main(int argc,char *argv[])
 {
 
-   int rank,p;
+   int rank,p,*x,*y;
    struct timeval t1,t2;
 
    MPI_Init(&argc,&argv);
@@ -32,7 +32,7 @@ int main(int argc,char *argv[])
    if(rank==1) {
 	   for (int i = 1; i < 10; i++)
 	   {
-		int x[i];
+		x = malloc(i * sizeof(int));
 		int dest = 0;
 		gettimeofday(&t1,NULL);
 		MPI_Send(x,i,MPI_INT,dest,0,MPI_COMM_WORLD);
@@ -45,7 +45,6 @@ int main(int argc,char *argv[])
    if (rank==0) {
 	   for (int i = 1; i < 10; i++)
 	   {
-   		int *y;
 		MPI_Status status;
 		gettimeofday(&t1,NULL);
    		MPI_Recv(y,i,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
