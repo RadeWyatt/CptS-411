@@ -9,6 +9,7 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <mpi.h> 
 #include <assert.h>
 #include <sys/time.h>
