@@ -30,7 +30,7 @@ int main(int argc,char *argv[])
 {
 	int rank,p;
 	struct timeval t1,t2;
-	int *y;
+	int *y = (int *)malloc(sizeof(int) * 3);
 
 	MPI_Init(&argc,&argv);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
