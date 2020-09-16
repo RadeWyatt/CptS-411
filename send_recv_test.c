@@ -30,7 +30,7 @@ int main(int argc,char *argv[])
 {
 	int rank,p;
 	struct timeval t1,t2;
-	int x, y;
+	int *x, *y;
 
 	MPI_Status reqs[3];
 
