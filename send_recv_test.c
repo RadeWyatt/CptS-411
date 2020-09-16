@@ -30,7 +30,7 @@ int power(int base, unsigned int exp) {
 
 int main(int argc,char *argv[])
 {
-	int rank,p;
+	int rank,p, msgSize;
 	struct timeval t1,t2;
 	int *y, *x;
 
@@ -45,7 +45,6 @@ int main(int argc,char *argv[])
 
 	for(int numInts = 10; numInts < 100000; i*=10)
 	{
-
 		if(rank==1) {
 			msgSize = sizeof(int) * numInts;
 			*x = (int *)calloc(msgSize, sizeof(int));
