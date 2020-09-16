@@ -30,7 +30,7 @@ int main(int argc,char *argv[])
 {
 	int rank,p;
 	struct timeval t1,t2;
-	int *x, *y;
+	int *y;
 
 	MPI_Init(&argc,&argv);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
@@ -42,7 +42,7 @@ int main(int argc,char *argv[])
 	assert(p>=2);
 
 	if(rank==1) {
-		x = [1,2,3];
+		int x[3] = {1,2,3};
 		int dest = 0;
 		gettimeofday(&t1,NULL);
 		MPI_Send(x,3,MPI_INT,dest,0,MPI_COMM_WORLD);
