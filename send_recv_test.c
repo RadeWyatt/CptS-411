@@ -28,40 +28,37 @@ int power(int base, unsigned int exp) {
 
 int main(int argc,char *argv[])
 {
-	printf("argc= %d\n", argc);
-	for (int j = 0; j < argc; j++) {
-		printf("ARGV[%d]= %s", j, argv[j]);
-	}
-   int rank,p;
-   struct timeval t1,t2;
+	int rank,p;
+	struct timeval t1,t2;
 	int x, y;
-   MPI_Init(&argc,&argv);
-   MPI_Comm_rank(MPI_COMM_WORLD,&rank);
-   MPI_Comm_size(MPI_COMM_WORLD,&p);
 
-   printf("my rank=%d\n",rank);
-   printf("Rank=%d: number of processes =%d\n",rank,p);
+	for (int i = 0; i < 10; i++) {
+		MPI_Init(&argc,&argv);
+		MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+		MPI_Comm_size(MPI_COMM_WORLD,&p);
 
-   assert(p>=2);
+		printf("my rank=%d\n",rank);
+		printf("Rank=%d: number of processes =%d\n",rank,p);
 
+		assert(p>=2);
 
-   if(rank==1) {
-		x = 0;
-		int dest = 0;
-		gettimeofday(&t1,NULL);
-		MPI_Send(&x,1,MPI_INT,dest,0,MPI_COMM_WORLD);
-		gettimeofday(&t2,NULL);
-		int tSend = (t2.tv_sec-t1.tv_sec)*1000 + (t2.tv_usec-t1.tv_usec)/1000;
-		printf("Rank=%d: sent message %d to rank %d; Send time %d millisec\n", rank, x,dest,tSend);
-   } else 
-   if (rank==0) {
-		MPI_Status status;
-		gettimeofday(&t1,NULL);
-   		MPI_Recv(&y,1,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
-		gettimeofday(&t2,NULL);
-		int tRecv = (t2.tv_sec-t1.tv_sec)*1000 + (t2.tv_usec-t1.tv_usec)/1000;
-		printf("Rank=%d: received message %d from rank %d; Recv time %d millisec\n",rank, y ,status.MPI_SOURCE,tRecv);
-   }
+		if(rank==1) {
+			x = 0;
+			int dest = 0;
+			gettimeofday(&t1,NULL);
+			MPI_Send(&x,1,MPI_INT,dest,0,MPI_COMM_WORLD);
+			gettimeofday(&t2,NULL);
+			int tSend = (t2.tv_sec-t1.tv_sec)*1000 + (t2.tv_usec-t1.tv_usec)/1000;
+			printf("Rank=%d: sent message %d to rank %d; Send time %d millisec\n", rank, x,dest,tSend);
+		} else if (rank==0) {
+			MPI_Status status;
+			gettimeofday(&t1,NULL);
+			MPI_Recv(&y,1,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
+			gettimeofday(&t2,NULL);
+			int tRecv = (t2.tv_sec-t1.tv_sec)*1000 + (t2.tv_usec-t1.tv_usec)/1000;
+			printf("Rank=%d: received message %d from rank %d; Recv time %d millisec\n",rank, y ,status.MPI_SOURCE,tRecv);
+		}
 
-   MPI_Finalize();
+		MPI_Finalize();
+	}
 }
