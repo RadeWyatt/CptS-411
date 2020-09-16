@@ -32,11 +32,11 @@ int main(int argc,char *argv[])
 	struct timeval t1,t2;
 	int x, y;
 
-	for (int i = 0; i < 10; i++) {
-		MPI_Init(&argc,&argv);
-		MPI_Comm_rank(MPI_COMM_WORLD,&rank);
-		MPI_Comm_size(MPI_COMM_WORLD,&p);
+	MPI_Init(&argc,&argv);
+	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+	MPI_Comm_size(MPI_COMM_WORLD,&p);
 
+	for (int i = 0; i < 10; i++) {
 		printf("my rank=%d\n",rank);
 		printf("Rank=%d: number of processes =%d\n",rank,p);
 
