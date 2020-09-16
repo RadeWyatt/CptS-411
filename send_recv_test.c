@@ -29,8 +29,8 @@ int power(int base, unsigned int exp) {
 int main(int argc,char *argv[])
 {
 	printf("argc= %d\n", argc);
-	for (int i = 0; i < argc; i++) {
-		printf("ARGV[%d]= %s", i, argv[i]);
+	for (int j = 0; j < argc; j++) {
+		printf("ARGV[%d]= %s", j, argv[j]);
 	}
    int rank,p;
    struct timeval t1,t2;
