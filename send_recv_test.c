@@ -45,7 +45,7 @@ int main(int argc,char *argv[])
 		assert(p>=2);
 
 		if(rank==1) {
-			x = i;
+			x = (int *)malloc(1024);
 			int dest = 0;
 			gettimeofday(&t1,NULL);
 			MPI_Send(&x,1,MPI_INT,dest,0,MPI_COMM_WORLD);
