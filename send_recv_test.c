@@ -48,7 +48,7 @@ int main(int argc,char *argv[])
 		MPI_Send(x,3,MPI_INT,dest,0,MPI_COMM_WORLD);
 		gettimeofday(&t2,NULL);
 		int tSend = (t2.tv_sec-t1.tv_sec)*1000 + (t2.tv_usec-t1.tv_usec)/1000;
-		printf("Rank=%d: sent message %ld to rank %d; Send time %d millisec\n", rank, x[0],dest,tSend);
+		printf("Rank=%d: sent message to rank %d; size: %d bytes; Send time %d millisec\n", rank,sizeof(x),dest,tSend);
 	} else if (rank==0) {
 		MPI_Status status;
 		gettimeofday(&t1,NULL);
