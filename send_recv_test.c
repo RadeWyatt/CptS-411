@@ -58,7 +58,6 @@ int main(int argc,char *argv[])
 			int tRecv = (t2.tv_sec-t1.tv_sec)*1000 + (t2.tv_usec-t1.tv_usec)/1000;
 			printf("Rank=%d: received message %d from rank %d; Recv time %d millisec\n",rank, y ,status.MPI_SOURCE,tRecv);
 		}
-
-		MPI_Finalize();
 	}
+	MPI_Finalize();
 }
