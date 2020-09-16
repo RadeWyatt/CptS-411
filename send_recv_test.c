@@ -14,6 +14,7 @@
 #include <assert.h>
 #include <sys/time.h>
 
+const int msgSize = 100000;
 
 int power(int base, unsigned int exp) {
     int i, result = 1;
@@ -30,7 +31,7 @@ int main(int argc,char *argv[])
 {
 	int rank,p;
 	struct timeval t1,t2;
-	int *y = (int *)malloc(sizeof(int) * 1024);
+	int *y = (int *)malloc(sizeof(int) * msgSize);
 
 	MPI_Init(&argc,&argv);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
@@ -42,18 +43,18 @@ int main(int argc,char *argv[])
 	assert(p>=2);
 
 	if(rank==1) {
-		int x[1024] = {0};
+		int x[msgSize] = {0};
 		size_t s = sizeof(x);
 		int dest = 0;
 		gettimeofday(&t1,NULL);
-		MPI_Send(x,1024,MPI_INT,dest,0,MPI_COMM_WORLD);
+		MPI_Send(x,msgSize,MPI_INT,dest,0,MPI_COMM_WORLD);
 		gettimeofday(&t2,NULL);
 		int tSend = (t2.tv_sec-t1.tv_sec)*1000 + (t2.tv_usec-t1.tv_usec)/1000;
 		printf("Rank=%d: sent message to rank %d; size: %d bytes; Send time %d millisec\n", rank,dest,s,tSend);
 	} else if (rank==0) {
 		MPI_Status status;
 		gettimeofday(&t1,NULL);
-		MPI_Recv(y,1024,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
+		MPI_Recv(y,msgSize,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
 		gettimeofday(&t2,NULL);
 		int tRecv = (t2.tv_sec-t1.tv_sec)*1000 + (t2.tv_usec-t1.tv_usec)/1000;
 		printf("Rank=%d: received message %ld from rank %d; Recv time %d millisec\n",rank, y[0],status.MPI_SOURCE,tRecv);
