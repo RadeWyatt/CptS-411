@@ -43,7 +43,7 @@ int main(int argc,char *argv[])
 	assert(p>=2);
 
 	if(rank==1) {
-		int x[msgSize] = {0};
+		int *x = (int *)calloc(msgSize, sizeof(int));
 		size_t s = sizeof(x);
 		int dest = 0;
 		gettimeofday(&t1,NULL);
