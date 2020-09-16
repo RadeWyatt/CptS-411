@@ -55,10 +55,9 @@ int main(int argc,char *argv[])
 			int tSend = (t2.tv_sec-t1.tv_sec)*1000 + (t2.tv_usec-t1.tv_usec)/1000;
 			printf("Rank=%d: sent message to rank %d; size: %d bytes; Send time %d millisec\n", rank,dest,msgSize,tSend);
 		} else if (rank==0) {
-			MPI_Status status;
 			y = (int *)malloc(sizeof(int) * numInts);
 			gettimeofday(&t1,NULL);
-			MPI_Recv(y,numInts,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
+			MPI_Recv(y,numInts,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 			gettimeofday(&t2,NULL);
 			int tRecv = (t2.tv_sec-t1.tv_sec)*1000 + (t2.tv_usec-t1.tv_usec)/1000;
 			printf("Rank=%d: received message %d from rank %d; Recv time %d millisec\n",rank, y[0],status.MPI_SOURCE,tRecv);
