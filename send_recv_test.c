@@ -43,11 +43,11 @@ int main(int argc,char *argv[])
 
 	assert(p>=2);
 
-	for(int numInts = 10; numInts < 100000; i*=10)
+	for(int numInts = 10; numInts < 100000; numInts*=10)
 	{
 		if(rank==1) {
 			msgSize = sizeof(int) * numInts;
-			*x = (int *)calloc(msgSize, sizeof(int));
+			x = (int *)calloc(msgSize, sizeof(int));
 			int dest = 0;
 			gettimeofday(&t1,NULL);
 			MPI_Send(x,numInts,MPI_INT,dest,0,MPI_COMM_WORLD);
@@ -56,7 +56,7 @@ int main(int argc,char *argv[])
 			printf("Rank=%d: sent message to rank %d; size: %d bytes; Send time %d millisec\n", rank,dest,msgSize,tSend);
 		} else if (rank==0) {
 			MPI_Status status;
-			*y = (int *)malloc(sizeof(int) * numInts);
+			y = (int *)malloc(sizeof(int) * numInts);
 			gettimeofday(&t1,NULL);
 			MPI_Recv(y,numInts,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
 			gettimeofday(&t2,NULL);
