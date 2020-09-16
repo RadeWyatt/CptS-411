@@ -32,11 +32,13 @@ int main(int argc,char *argv[])
 	struct timeval t1,t2;
 	int x, y;
 
+	MPI_Status reqs[3];
+
 	MPI_Init(&argc,&argv);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 	MPI_Comm_size(MPI_COMM_WORLD,&p);
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 3; i++) {
 		printf("my rank=%d\n",rank);
 		printf("Rank=%d: number of processes =%d\n",rank,p);
 
@@ -53,7 +55,7 @@ int main(int argc,char *argv[])
 		} else if (rank==0) {
 			MPI_Status status;
 			gettimeofday(&t1,NULL);
-			MPI_Recv(&y,1,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
+			MPI_Recv(&y,1,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&reqs[i]);
 			gettimeofday(&t2,NULL);
 			int tRecv = (t2.tv_sec-t1.tv_sec)*1000 + (t2.tv_usec-t1.tv_usec)/1000;
 			printf("Rank=%d: received message %d from rank %d; Recv time %d millisec\n",rank, y ,status.MPI_SOURCE,tRecv);
