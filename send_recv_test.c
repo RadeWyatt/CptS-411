@@ -13,6 +13,7 @@
 #include <assert.h>
 #include <sys/time.h>
 #include <mpi.h>
+#include <string.h>
 
 
 const int numIterations = 25;
@@ -25,16 +26,22 @@ int power(int base, unsigned int exp) {
     return result;
 }
 
-void printArray(int *send, int *rec, int rank) {
+void printArray(int *send, int *rec, int rank, int blocking) {
 	int i = 0;
 	int *arr = NULL;
 
 	if (rank == 1) {
 		arr = send;
-		printf("\n\n%28s\n", "Send Statistics");
+		if (blocking)
+			printf("\n\n%28s\n", "Blocking Send Statistics");
+		else 
+			printf("\n\n%28s\n", "Non-Blocking Send Statistics");
 	} else {
 		arr = rec;
-		printf("\n\n%29s\n", "Receive Statistics");
+		if (blocking)
+			printf("\n\n%29s\n", "Blocking Receive Statistics");
+		else 
+			printf("\n\n%29s\n", "Non-Blocking Receive Statistics");
 	}
 
 	printf("%10s%15s%15s\n", "# Bytes", "# Microsec", "# Millisec");
@@ -53,6 +60,11 @@ int main(int argc,char *argv[])
 
 	int blockSendTime[numIterations], blockRecTime[numIterations];
 	int nonBlockSendTime[numIterations], nonBlockRecTime[numIterations];
+
+	memset(blockSendTime, 0, numIterations);
+	memset(blockRecTime, 0, numIterations);
+	memset(nonBlockRecTime, 0, numIterations);
+	memset(nonBlockSendTime, 0, numIterations);
 
 	MPI_Init(&argc,&argv);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
@@ -77,7 +89,7 @@ int main(int argc,char *argv[])
 		} else if (rank==0) {
 			for (int k = 0; k < 10; k++) {
 				MPI_Status status;
-				y = (int *)malloc(msgSize);
+				y = (int *)calloc(numInts, sizeof(int));
 				gettimeofday(&t1,NULL);
 				MPI_Recv(y,numInts,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
 				gettimeofday(&t2,NULL);
@@ -86,8 +98,6 @@ int main(int argc,char *argv[])
 			}
 		}
 	}
-
-	printArray(blockSendTime, blockRecTime, rank);
 
 	for(int j = 0; j < numIterations; j++)
 	{
@@ -101,22 +111,24 @@ int main(int argc,char *argv[])
 				MPI_Send(x,numInts,MPI_INT,dest,0,MPI_COMM_WORLD);
 				gettimeofday(&t2,NULL);
 				int sendMicro = (t2.tv_sec-t1.tv_sec)*1000000 + (t2.tv_usec-t1.tv_usec);
-				nonBlockSendTime[j] = (nonBlockSendTime[j] + sendMicro) / 2;
+				nonBlockSendTime[j] = sendMicro;
 			}
 		} else if (rank==0) {
-			MPI_Request request;
-			MPI_Status status;
+			MPI_Request request1;
 			for (int k = 0; k < 10; k++) {
+				MPI_Status status1;
 				y = (int *)calloc(numInts, sizeof(int));
 				gettimeofday(&t1,NULL);
-				MPI_Irecv(y,numInts,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&request);
-				MPI_Wait(&request, &status);
+				MPI_Irecv(y,numInts,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&request1);
+				MPI_Wait(&request1, &status1);
 				gettimeofday(&t2,NULL);
 				int recMicro = (t2.tv_sec-t1.tv_sec)*1000000 + (t2.tv_usec-t1.tv_usec);
-				nonBlockRecTime[j] = (nonBlockRecTime[j] + recMicro) / 2;
+				nonBlockRecTime[j] = recMicro;
 			}
 		}
 	}
-	printArray(nonBlockSendTime, nonBlockRecTime, rank);
 	MPI_Finalize();
+
+	printArray(blockSendTime, blockRecTime, rank, 1);
+	printArray(nonBlockSendTime, nonBlockRecTime, rank, 0);
 }
