@@ -9,24 +9,41 @@
 
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <mpi.h> 
+#include <stdlib.h> 
 #include <assert.h>
 #include <sys/time.h>
+#include <mpi.h>
 
-//const int numInts = 1000000;
-//const int msgSize = sizeof(int) * numInts;
 
+const int numIterations = 25;
+
+// power function that works for type int. 
 int power(int base, unsigned int exp) {
     int i, result = 1;
     for (i = 0; i < exp; i++)
         result *= base;
     return result;
- }
+}
 
- char* generateString(int numBytes) {
-	 return (char *)malloc(numBytes);
- }
+void printArray(int *send, int *rec, int rank) {
+	int i = 0;
+	int *arr = NULL;
+
+	if (rank == 1) {
+		arr = send;
+		printf("\n\n%28s\n", "Send Statistics");
+	} else {
+		arr = rec;
+		printf("\n\n%29s\n", "Receive Statistics");
+	}
+
+	printf("%10s%15s%15s\n", "# Bytes", "# Microsec", "# Millisec");
+	while (i < numIterations) {
+		int msgSize = sizeof(int) * power(2, i);
+		printf("%10d%15d%15d\n", msgSize, arr[i], (arr[i]/1000));
+		i++;
+	}
+}
 
 int main(int argc,char *argv[])
 {
@@ -34,36 +51,36 @@ int main(int argc,char *argv[])
 	struct timeval t1,t2;
 	int *y, *x;
 
+	int sendTime[numIterations], recTime[numIterations];
+
 	MPI_Init(&argc,&argv);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 	MPI_Comm_size(MPI_COMM_WORLD,&p);
 
-	printf("my rank=%d\n",rank);
-	printf("Rank=%d: number of processes =%d\n",rank,p);
-
 	assert(p>=2);
 
-	for(int numInts = 10; numInts < 10000000; numInts*=10)
+	for(int j = 0; j < numIterations; j++)
 	{
+		int numInts = power(2, j);
+		int msgSize = sizeof(int) * numInts;
 		if(rank==1) {
-			msgSize = sizeof(int) * numInts;
-			x = (int *)calloc(msgSize, sizeof(int));
+			x = (int *)calloc(numInts, sizeof(int));
 			int dest = 0;
 			gettimeofday(&t1,NULL);
 			MPI_Send(x,numInts,MPI_INT,dest,0,MPI_COMM_WORLD);
 			gettimeofday(&t2,NULL);
-			int tSend = (t2.tv_sec-t1.tv_sec)*1000 + (t2.tv_usec-t1.tv_usec)/1000;
-			printf("Rank=%d: sent message to rank %d; size: %d bytes; Send time %d millisec\n", rank,dest,msgSize,tSend);
+			int sendMicro = (t2.tv_sec-t1.tv_sec)*1000000 + (t2.tv_usec-t1.tv_usec);
+			sendTime[j] = sendMicro;
 		} else if (rank==0) {
 			MPI_Status status;
-			y = (int *)malloc(sizeof(int) * numInts);
+			y = (int *)malloc(msgSize);
 			gettimeofday(&t1,NULL);
 			MPI_Recv(y,numInts,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
 			gettimeofday(&t2,NULL);
-			int tRecv = (t2.tv_sec-t1.tv_sec)*1000 + (t2.tv_usec-t1.tv_usec)/1000;
-			printf("Rank=%d: received message %d from rank %d; Recv time %d millisec\n",rank, y[0],status.MPI_SOURCE,tRecv);
+			int recMicro = (t2.tv_sec-t1.tv_sec)*1000000 + (t2.tv_usec-t1.tv_usec);
+			recTime[j] = recMicro;
 		}
 	}
-
 	MPI_Finalize();
+	printArray(sendTime, recTime, rank);
 }
