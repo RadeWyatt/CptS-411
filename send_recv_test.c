@@ -51,7 +51,8 @@ int main(int argc,char *argv[])
 	struct timeval t1,t2;
 	int *y, *x;
 
-	int sendTime[numIterations], recTime[numIterations];
+	int blockSendTime[numIterations], blockRecTime[numIterations];
+	//int nonBlockSendTime[numIterations], nonBlockRecTime[numIterations];
 
 	MPI_Init(&argc,&argv);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
@@ -64,23 +65,57 @@ int main(int argc,char *argv[])
 		int numInts = power(2, j);
 		int msgSize = sizeof(int) * numInts;
 		if(rank==1) {
+			for (int k = 0; k < 10; k++) {
+				x = (int *)calloc(numInts, sizeof(int));
+				int dest = 0;
+				gettimeofday(&t1,NULL);
+				MPI_Send(x,numInts,MPI_INT,dest,0,MPI_COMM_WORLD);
+				gettimeofday(&t2,NULL);
+				int sendMicro = (t2.tv_sec-t1.tv_sec)*1000000 + (t2.tv_usec-t1.tv_usec);
+				blockSendTime[j] = (blockSendTime[j] + sendMicro) / 2;
+			}
+		} else if (rank==0) {
+			for (int k = 0; k < 10; k++) {
+				MPI_Status status;
+				y = (int *)malloc(msgSize);
+				gettimeofday(&t1,NULL);
+				MPI_Recv(y,numInts,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
+				gettimeofday(&t2,NULL);
+				int recMicro = (t2.tv_sec-t1.tv_sec)*1000000 + (t2.tv_usec-t1.tv_usec);
+				blockRecTime[j] = (blockRecTime[j] + recMicro) / 2;
+			}
+		}
+	}
+
+	/*
+	for(int j = 0; j < numIterations; j++)
+	{
+		int numInts = power(2, j);
+		int msgSize = sizeof(int) * numInts;
+		if(rank==1) {
 			x = (int *)calloc(numInts, sizeof(int));
 			int dest = 0;
 			gettimeofday(&t1,NULL);
 			MPI_Send(x,numInts,MPI_INT,dest,0,MPI_COMM_WORLD);
 			gettimeofday(&t2,NULL);
 			int sendMicro = (t2.tv_sec-t1.tv_sec)*1000000 + (t2.tv_usec-t1.tv_usec);
-			sendTime[j] = sendMicro;
+			nonBlockSendTime[j] = sendMicro;
 		} else if (rank==0) {
+			MPI_Request request;
 			MPI_Status status;
 			y = (int *)malloc(msgSize);
 			gettimeofday(&t1,NULL);
-			MPI_Recv(y,numInts,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
+			MPI_Irecv(y,numInts,MPI_INT,MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&request);
+			MPI_Wait(&request, &status);
 			gettimeofday(&t2,NULL);
 			int recMicro = (t2.tv_sec-t1.tv_sec)*1000000 + (t2.tv_usec-t1.tv_usec);
-			recTime[j] = recMicro;
+			nonBlockRecTime[j] = recMicro;
 		}
 	}
+	*/
+
 	MPI_Finalize();
-	printArray(sendTime, recTime, rank);
+
+	printArray(blockSendTime, blockRecTime, rank);
+	//printArray(nonBlockSendTime, nonBlockRecTime, rank);
 }
