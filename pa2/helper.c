@@ -2,7 +2,7 @@
 #include <mpi.h>
 #include <time.h>
 
-void GenerateInitialGoL(int p, int bp, int rank, int n, int *section)
+void GenerateInitialGoL(int p, int bp, int rank, int n, int ***section)
 {
     int randSeed;
     int bp2 = bp*bp;
@@ -31,4 +31,16 @@ void GenerateInitialGoL(int p, int bp, int rank, int n, int *section)
         }
     }
     section = div;
+}
+
+void printShare(int **arr, int n, int p)
+{
+    for(int i = 0; i < n/p; i++)
+    {
+        for(int j = 0; j < n; j++)
+        {
+            printf("%d ", arr[i][j]);
+        }
+        printf("\n");
+    }
 }
