@@ -3,14 +3,14 @@
 #include <mpi.h>
 #include <time.h>
 
-void GenerateInitialGoL(int p, int bp, int rank, int n, int **section)
+void GenerateInitialGoL(int p, int bp, int rank, int n, int **section, int rows, int cols)
 {
     MPI_Status status;
     int randSeed;
     int bp2 = bp*bp;
     srand(time(NULL));
     if(rank == 0){
-        for (int i = 1; i < p; p++)
+        for (int i = 1; i < p; i++)
         {
             randSeed = rand() % bp2 + 1;
             MPI_Send(&randSeed, sizeof(int), MPI_INT, i, 0, MPI_COMM_WORLD);
@@ -23,25 +23,24 @@ void GenerateInitialGoL(int p, int bp, int rank, int n, int **section)
     }
 
     srand(randSeed);
-    //section = malloc(sizeof(int*) * (n/p));
-    for(int i = 0; i < n/p; i++)
+    for(int i = 0; i < rows; i++)
     {
-        //section[i] = malloc(sizeof(int) * n);
-        for(int j = 0; j < n; j++)
+        for(int j = 0; j < cols; j++)
         {
             section[i][j] = rand() % 2;
         }
     }
 }
 
-void printShare(int **arr, int n, int p)
+void printShare(int **arr, int rows, int cols, int rank)
 {
-    for(int i = 0; i < n/p; i++)
+    for(int i = 0; i < rows; i++)
     {
-        for(int j = 0; j < n; j++)
+        for(int j = 0; j < cols; j++)
         {
             printf("%d ", arr[i][j]);
         }
         printf("\n");
     }
+    printf("RANK: %d\n", rank);
 }

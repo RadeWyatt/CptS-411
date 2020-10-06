@@ -3,27 +3,29 @@
 int main(int argc,char *argv[])
 {
 
-   int rank,p, n, rseed;
-   int bp = 93563;
+   int rank, p, rseed;
+   //int bp = 93563;
+   int bp = 7;
    int **work;
-   n = 7;
    
-   work = malloc(sizeof(int*) * (n/p));
-   for(int i = 0; i < n/p; i++)
+   int n = 7;
+
+   MPI_Init(&argc, &argv);
+   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+   MPI_Comm_size(MPI_COMM_WORLD, &p);
+
+   int rows = n;
+   int cols = n / p;
+
+   work = malloc(rows * sizeof *work);
+   for(int i = 0; i < rows; i++)
    {
-      section[i] = malloc(sizeof(int) * n);
+      work[i] = malloc(cols * sizeof *work[i]);
    }
 
-   MPI_Init(&argc,&argv);
-   MPI_Comm_rank(MPI_COMM_WORLD,&rank);
-   MPI_Comm_size(MPI_COMM_WORLD,&p);
+   GenerateInitialGoL(p, bp, rank, n, work, rows, cols);
 
-   printf("my rank=%d\n",rank);
-   printf("Rank=%d: number of processes =%d\n",rank,p);
-
-   GenerateInitialGoL(p, bp, rank, n, work);
-   printShare(work, n, p);
+   printShare(work, rows, cols, rank);
 
    MPI_Finalize();
-
 }
