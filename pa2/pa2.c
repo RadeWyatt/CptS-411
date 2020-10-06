@@ -9,11 +9,14 @@
 
 #include <stdio.h>
 #include <mpi.h> 
+#include "helper.c"
 
 int main(int argc,char *argv[])
 {
 
-   int rank,p;
+   int rank,p, n, rseed;
+   int bp = 93563;
+   int *work;
 
    MPI_Init(&argc,&argv);
    MPI_Comm_rank(MPI_COMM_WORLD,&rank);
@@ -22,8 +25,13 @@ int main(int argc,char *argv[])
    printf("my rank=%d\n",rank);
    printf("Rank=%d: number of processes =%d\n",rank,p);
 
-   //while(1) {
-   //}
+   if (rank != 0)
+   {
+   }
+   else
+   {
+      GenerateInitialGol();
+   }
 
    MPI_Finalize();
 }
