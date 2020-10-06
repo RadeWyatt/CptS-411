@@ -3,13 +3,11 @@
 #include <mpi.h>
 #include <time.h>
 
-void GenerateInitialGoL(int p, int bp, int rank, int n, int ***section)
+void GenerateInitialGoL(int p, int bp, int rank, int n, int **section)
 {
     MPI_Status status;
     int randSeed;
     int bp2 = bp*bp;
-    int cols = n/p;
-    int div[cols][n];
     srand(time(NULL));
     if(rank == 0){
         for (int i = 1; i < p; p++)
@@ -25,14 +23,15 @@ void GenerateInitialGoL(int p, int bp, int rank, int n, int ***section)
     }
 
     srand(randSeed);
-    for(int i = 0; i < cols; i++)
+    section = malloc(sizeof(int*) * (n/p));
+    for(int i = 0; i < n/p; i++)
     {
+        section[i] = malloc(sizeof(int) * n);
         for(int j = 0; j < n; j++)
         {
-            div[i][j] = rand() % 2;
+            section[i][j] = rand() % 2;
         }
     }
-    section = div;
 }
 
 void printShare(int **arr, int n, int p)
