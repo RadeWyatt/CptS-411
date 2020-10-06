@@ -26,7 +26,7 @@ int main(int argc,char *argv[])
    printf("my rank=%d\n",rank);
    printf("Rank=%d: number of processes =%d\n",rank,p);
 
-   GenerateInitialGol(p, bp, rank, n, &work);
+   GenerateInitialGoL(p, bp, rank, n, &work);
    printShare(work, n, p);
 
    MPI_Finalize();

@@ -1,0 +1,31 @@
+my rank=4
+Rank=4: number of processes =7
+my rank=5
+Rank=5: number of processes =7
+my rank=6
+Rank=6: number of processes =7
+my rank=0
+Rank=0: number of processes =7
+my rank=1
+Rank=1: number of processes =7
+my rank=2
+Rank=2: number of processes =7
+my rank=3
+Rank=3: number of processes =7
+[n0002:267981] *** Process received signal ***
+[n0002:267981] Signal: Segmentation fault (11)
+[n0002:267981] Signal code: Address not mapped (1)
+[n0002:267981] Failing at address: 0x1
+[n0002:267981] [ 0] /lib/x86_64-linux-gnu/libc.so.6(+0x46210)[0x7f048d64f210]
+[n0002:267981] [ 1] /home/rade.pilkinton/CptS-411/pa2/yezzir(+0x1613)[0x5557231a2613]
+[n0002:267981] [ 2] /home/rade.pilkinton/CptS-411/pa2/yezzir(+0x1718)[0x5557231a2718]
+[n0002:267981] [ 3] /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf3)[0x7f048d6300b3]
+[n0002:267981] [ 4] /home/rade.pilkinton/CptS-411/pa2/yezzir(+0x11ee)[0x5557231a21ee]
+[n0002:267981] *** End of error message ***
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun noticed that process rank 1 with PID 267981 on node n0002 exited on signal 11 (Segmentation fault).
+--------------------------------------------------------------------------

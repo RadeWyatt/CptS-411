@@ -1,14 +1,16 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <mpi.h>
 #include <time.h>
 
 void GenerateInitialGoL(int p, int bp, int rank, int n, int ***section)
 {
+    MPI_Status status;
     int randSeed;
     int bp2 = bp*bp;
     int cols = n/p;
     int div[cols][n];
-    srand(time(NULL))
+    srand(time(NULL));
     if(rank == 0){
         for (int i = 1; i < p; p++)
         {
