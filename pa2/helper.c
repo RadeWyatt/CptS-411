@@ -23,10 +23,10 @@ void GenerateInitialGoL(int p, int bp, int rank, int n, int **section)
     }
 
     srand(randSeed);
-    section = malloc(sizeof(int*) * (n/p));
+    //section = malloc(sizeof(int*) * (n/p));
     for(int i = 0; i < n/p; i++)
     {
-        section[i] = malloc(sizeof(int) * n);
+        //section[i] = malloc(sizeof(int) * n);
         for(int j = 0; j < n; j++)
         {
             section[i][j] = rand() % 2;

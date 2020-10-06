@@ -7,6 +7,12 @@ int main(int argc,char *argv[])
    int bp = 93563;
    int **work;
    n = 7;
+   
+   work = malloc(sizeof(int*) * (n/p));
+   for(int i = 0; i < n/p; i++)
+   {
+      section[i] = malloc(sizeof(int) * n);
+   }
 
    MPI_Init(&argc,&argv);
    MPI_Comm_rank(MPI_COMM_WORLD,&rank);
