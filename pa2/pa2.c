@@ -8,7 +8,7 @@ int main(int argc,char *argv[])
    int **work;
    
    // n x n  is is the size of the grid.  
-   int n = 70;
+   n = 70;
    // number of generations
    int g = 7;
 
@@ -27,9 +27,9 @@ int main(int argc,char *argv[])
       work[i] = malloc(cols * sizeof *work[i]);
    }
 
-   GenerateInitialGoL(p, bp, rank, work, rows, cols);
+   GenerateInitialGoL(p, bp, rank, work);
 
-   //printShare(work, rows, cols, rank);
+   //printShare(work, rank);
 
    MPI_Finalize();
 }

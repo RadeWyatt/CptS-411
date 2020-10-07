@@ -3,9 +3,13 @@
 #include <mpi.h>
 #include <time.h>
 
-void GenerateInitialGoL(int p, int bp, int rank, int **section, int rows, int cols)
+int p, n;
+
+void GenerateInitialGoL(int bp, int rank, int **section)
 {
     MPI_Status status;
+    int rows = n/p;
+    int cols = n;
     int randSeed;
     int bp2 = bp*bp;
     srand(time(NULL));
@@ -40,8 +44,52 @@ void DetermineState(int x, int y) {
 
 }
 
-void printShare(int **arr, int rows, int cols, int rank)
+void getRowsFromNeighbors(int rank, int *prev, int *post)
 {
+    int back, front;
+    back = rank - 1;
+    front = rank + 1;
+    MPI_Status status;
+    if(rank == 0)
+    {
+        back = p - 1;
+    }
+    else if (rank == p-1)
+    {
+        front = 0;
+    }
+    MPI_Recv(prev, sizeof(int)*n, MPI_INT, back, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+    MPI_Recv(post, sizeof(int)*n, MPI_INT, front, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+}
+
+void sendFwd(int rank, int *info)
+{
+    if (rank == p-1)
+    {
+		MPI_Send(info, sizeof(int)*n, MPI_INT, 0, 0, MPI_COMM_WORLD);
+    }
+    else
+    {
+		MPI_Send(info, sizeof(int)*n, MPI_INT, rank+1, 0, MPI_COMM_WORLD);
+    }
+}
+
+void sendBack(int rank, int *info)
+{
+    if (rank == 0)
+    {
+		MPI_Send(info, sizeof(int)*n, MPI_INT, p-1, 0, MPI_COMM_WORLD);
+    }
+    else
+    {
+		MPI_Send(info, sizeof(int)*n, MPI_INT, rank-1, 0, MPI_COMM_WORLD);
+    }
+}
+
+void printShare(int **arr, int rank)
+{
+    int cols = n;
+    int rows = n/p;
     for(int i = 0; i < rows; i++)
     {
         for(int j = 0; j < cols; j++)
