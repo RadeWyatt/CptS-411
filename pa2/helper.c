@@ -3,7 +3,7 @@
 #include <mpi.h>
 #include <time.h>
 
-void GenerateInitialGoL(int p, int bp, int rank, int n, int **section, int rows, int cols)
+void GenerateInitialGoL(int p, int bp, int rank, int **section, int rows, int cols)
 {
     MPI_Status status;
     int randSeed;
@@ -30,6 +30,14 @@ void GenerateInitialGoL(int p, int bp, int rank, int n, int **section, int rows,
             section[i][j] = rand() % 2;
         }
     }
+}
+
+void generateNeighborList(int x, int y, int **list) {
+
+}
+
+void DetermineState(int x, int y) {
+
 }
 
 void printShare(int **arr, int rows, int cols, int rank)
