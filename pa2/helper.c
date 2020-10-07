@@ -40,7 +40,7 @@ void sendRecvRows()
 {
     int *prev = malloc(sizeof(int)*n);
     int *post = malloc(sizeof(int)*n);
-    for(int t - 0; t < p; t++)
+    for(int t = 0; t < p; t++)
     {
         if(t == rank)
         {
@@ -57,7 +57,7 @@ void sendRecvRows()
     }
 }
 
-void generateNeighborList(int x, int y, int **list) {
+int * generateNeighborList(int x, int y, int *prev, int *post) {
 
 }
 
@@ -65,6 +65,9 @@ void DetermineState(int x, int y) {
 
 }
 
+/*
+    Recieve both rows of matrix necessary for state computation for a single process.
+*/
 void getRowsFromNeighbors(int *prev, int *post)
 {
     int back, front;
@@ -83,6 +86,9 @@ void getRowsFromNeighbors(int *prev, int *post)
     MPI_Recv(post, sizeof(int)*n, MPI_INT, front, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 }
 
+/*
+    Send the last row of the matrix to the next process.
+*/
 void sendFwd()
 {
     int *info = work[n/p];
@@ -96,6 +102,10 @@ void sendFwd()
     }
 }
 
+
+/*
+    Send the first row of the matrix to previous process.
+*/
 void sendBack()
 {
     int *info = work[0]
@@ -109,7 +119,13 @@ void sendBack()
     }
 }
 
-void printShare(int **arr)
+
+/*
+    Prints the work matrix. 
+    "work" is the subsection of the game board that a single
+    process is responsible for. 
+*/
+void printShare()
 {
     int cols = n;
     int rows = n/p;
@@ -117,7 +133,7 @@ void printShare(int **arr)
     {
         for(int j = 0; j < cols; j++)
         {
-            printf("%d ", arr[i][j]);
+            printf("%d ", work[i][j]);
         }
         printf("\n");
     }
