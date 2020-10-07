@@ -57,6 +57,12 @@ void sendRecvRows()
     }
 }
 
+/*
+    generates 1D array of neighbors, indexes are like so:
+    012
+    3x4
+    567
+*/
 int * generateNeighborList(int x, int y, int *prev, int *post) {
 
 }
