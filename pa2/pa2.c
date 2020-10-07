@@ -3,9 +3,8 @@
 int main(int argc,char *argv[])
 {
 
-   int rank, p, rseed;
+   int rseed;
    int bp = 93563;
-   int **work;
    
    // n x n  is is the size of the grid.  
    n = 70;
@@ -27,9 +26,9 @@ int main(int argc,char *argv[])
       work[i] = malloc(cols * sizeof *work[i]);
    }
 
-   GenerateInitialGoL(p, bp, rank, work);
+   GenerateInitialGoL(bp, work);
 
-   //printShare(work, rank);
+   //printShare(work);
 
    MPI_Finalize();
 }
