@@ -41,5 +41,7 @@ int main(int argc,char *argv[])
       free(post);
    }
 
+   DisplayGoL();
+
    MPI_Finalize();
 }

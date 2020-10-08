@@ -249,9 +249,34 @@ void printShare()
 
 void DisplayGoL() {
     // Initialize whole matrix
-    int **GoL = malloc(rows * sizeof *GoL);
-    for(int i = 0; i < rows; i++)
-    {
-        GoL[i] = malloc(cols * sizeof *GoL[i]);
+    if(rank == 0){
+        MPI_Status status
+        int **GoL = malloc(n * sizeof *GoL);
+        for(int i = 0; i < n; i++)
+        {
+            GoL[i] = malloc(n * sizeof *GoL[i]);
+        }
+        GoL = work;
+        for (int t = 1; t < p; t++)
+        {
+            MPI_Recv(GoL+(t*(n/p)*sizeof(int)), n*n/p, MPI_INT, t, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+        }
+        for (int i = 0; i < n; i++)
+        {
+            for int j = 0; j < n; j++)
+            {
+                printf("%d ", GoL[i][j]);
+            }
+            printf("\n");
+        }
+    }
+    else{
+        for(int t = 1; t < p; t++)
+        {
+            if (rank == t)
+            {
+		        MPI_Send(work, n*n/p, MPI_INT, 0, 0, MPI_COMM_WORLD);
+            }
+        }
     }
 }
