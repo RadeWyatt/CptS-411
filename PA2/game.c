@@ -246,3 +246,12 @@ void printShare()
         printf("\n");
     }
 }
+
+void DisplayGoL() {
+    // Initialize whole matrix
+    int **GoL = malloc(rows * sizeof *GoL);
+    for(int i = 0; i < rows; i++)
+    {
+        GoL[i] = malloc(cols * sizeof *GoL[i]);
+    }
+}

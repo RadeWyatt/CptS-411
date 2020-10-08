@@ -21,7 +21,7 @@ int DetermineState(int x, int y, int *prev, int *post);
 void DetermineGameState(int *prev, int *post);
 
 // Output
-void DisplayGoL();
 void printShare();
+void DisplayGoL();
 
 #endif

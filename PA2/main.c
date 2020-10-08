@@ -1,4 +1,4 @@
-#include "helper.c"
+#include "game.c"
 
 int main(int argc,char *argv[])
 {
@@ -39,9 +39,6 @@ int main(int argc,char *argv[])
 
       free(prev);
       free(post);
-
-       if (rank == 0)
-         printShare();
    }
 
    MPI_Finalize();
