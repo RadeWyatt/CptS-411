@@ -1,0 +1,248 @@
+#include "header.h"
+
+int p, n, rank, rows, cols, **work, **temp;
+
+void GenerateInitialGoL(int bp, int **section)
+{
+    MPI_Status status;
+    rows = n/p;
+    cols = n;
+    int randSeed;
+    int bp2 = bp*bp;
+    srand(time(NULL));
+    if(rank == 0){
+        for (int i = 1; i < p; i++)
+        {
+            randSeed = rand() % bp2 + 1;
+            MPI_Send(&randSeed, sizeof(int), MPI_INT, i, 0, MPI_COMM_WORLD);
+        }
+        randSeed = rand() % bp2 + 1;
+    }
+    else
+    {
+        MPI_Recv(&randSeed, sizeof(int),MPI_INT, 0,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
+    }
+
+    srand(randSeed);
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < cols; j++)
+        {
+            section[i][j] = rand() % 2;
+        }
+    }
+}
+
+/*
+    Send and recieve rows necessary for state computation. 
+*/
+void sendRecvRows(int *prev, int *post)
+{
+    for(int t = 0; t < p; t++)
+    {
+        if (t == rank)
+        {
+            getRowsFromNeighbors(prev, post);
+        }
+        else if (rank == t-1 || (t == 0 && rank == p-1))
+        {
+            sendFwd();
+        }
+        else if (rank == t+1 || (t==p-1 && rank == 0))
+        {
+            sendBack();
+        }
+    }
+}
+
+/*
+    Recieve both rows of matrix necessary for state computation for a single process.
+*/
+void getRowsFromNeighbors(int *prev, int *post)
+{
+    int back, front;
+    back = rank - 1;
+    front = rank + 1;
+    MPI_Status status;
+    if(rank == 0)
+    {
+        back = p - 1;
+    }
+    else if (rank == p-1)
+    {
+        front = 0;
+    } 
+
+    MPI_Recv(prev, sizeof(int)*n, MPI_INT, back, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+    MPI_Recv(post, sizeof(int)*n, MPI_INT, front, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+}
+
+/*
+    Send the last row of the matrix to the next process.
+*/
+void sendFwd()
+{
+    int *info = work[n/p - 1];
+    if (rank == p-1)
+    {
+		MPI_Send(info, n, MPI_INT, 0, 0, MPI_COMM_WORLD);
+    }
+    else
+    {
+		MPI_Send(info, n, MPI_INT, rank+1, 0, MPI_COMM_WORLD);
+    }
+}
+
+
+/*
+    Send the first row of the matrix to previous process.
+*/
+void sendBack()
+{
+    int *info = work[0];
+    if (rank == 0)
+    {
+		MPI_Send(info, n, MPI_INT, p-1, 0, MPI_COMM_WORLD);
+    }
+    else
+    {
+		MPI_Send(info, n, MPI_INT, rank-1, 0, MPI_COMM_WORLD);
+    }
+}
+
+/*
+    generates 1D array of neighbors alive/dead statuses, indexes are like so:
+    0 1 2
+    3 x 4
+    5 6 7
+    x = row, y = col
+*/
+int *generateNeighborList(int x, int y, int *prev, int *post) {
+    int *neighbors = malloc(sizeof(int)*8);
+    // Check boundaries.
+    if (x > 0 && x < rows-1) {
+        neighbors[1] = work[x-1][y];
+        neighbors[6] = work[x+1][y];
+        if (y > 0 && y < cols-1) {
+            // Normal neighbor list. All belong to this process.
+            neighbors[0] = work[x-1][y-1];
+            neighbors[2] = work[x-1][y+1];
+            neighbors[3] = work[x][y-1];
+            neighbors[4] = work[x][y+1];
+            neighbors[5] = work[x+1][y-1];
+            neighbors[7] = work[x+1][y+1];
+        } else if (y == 0) {
+            neighbors[0] = work[x-1][cols-1];
+            neighbors[2] = work[x-1][y+1];
+            neighbors[3] = work[x][cols-1];
+            neighbors[4] = work[x][y+1];
+            neighbors[5] = work[x+1][cols-1];
+            neighbors[7] = work[x+1][y+1];
+        } else {
+            neighbors[0] = work[x-1][y-1];
+            neighbors[2] = work[x-1][0];
+            neighbors[3] = work[x][y-1];
+            neighbors[4] = work[x][0];
+            neighbors[5] = work[x+1][y-1];
+            neighbors[7] = work[x+1][0];
+        }
+    } else if (x == 0) {
+        neighbors[1] = prev[y];
+        neighbors[6] = work[x+1][y];
+        if (y > 0 && y < cols-1) {
+            neighbors[0] = prev[y-1];
+            neighbors[2] = prev[y+1];
+            neighbors[3] = work[x][y-1];
+            neighbors[4] = work[x][y+1];
+            neighbors[5] = work[x+1][y-1];
+            neighbors[7] = work[x+1][y+1];
+        } else if (y == 0) {
+            neighbors[0] = prev[cols-1];
+            neighbors[2] = prev[y+1];
+            neighbors[3] = work[x][cols-1];
+            neighbors[4] = work[x][y+1];
+            neighbors[5] = work[x+1][cols-1];
+            neighbors[7] = work[x+1][y+1];
+        } else {
+            neighbors[0] = prev[y-1];
+            neighbors[2] = prev[0];
+            neighbors[3] = work[x][y-1];
+            neighbors[4] = work[x][0];
+            neighbors[5] = work[x+1][y-1];
+            neighbors[7] = work[x+1][0];
+        }
+    } else {
+        neighbors[1] = work[x-1][y];
+        neighbors[6] = post[y];
+        if (y > 0 && y < cols-1) {
+            neighbors[0] = work[x-1][y-1];
+            neighbors[2] = work[x-1][y+1];
+            neighbors[3] = work[x][y-1];
+            neighbors[4] = work[x][y+1];
+            neighbors[5] = post[y-1];
+            neighbors[7] = post[y+1];
+        } else if (y == 0) {
+            neighbors[0] = work[x-1][cols-1];
+            neighbors[2] = work[x-1][y+1];
+            neighbors[3] = work[x][cols-1];
+            neighbors[4] = work[x][y+1];
+            neighbors[5] = post[cols-1];
+            neighbors[7] = post[y+1];
+        } else {
+            neighbors[0] = work[x-1][y-1];
+            neighbors[2] = work[x-1][0];
+            neighbors[3] = work[x][y-1];
+            neighbors[4] = work[x][0];
+            neighbors[5] = post[y-1];
+            neighbors[7] = post[0];
+        }
+    }
+    return neighbors;
+}
+
+int DetermineState(int x, int y, int *prev, int *post) {
+    int *neighbors = generateNeighborList(x,y,prev,post);
+    int count = 0;
+    for (int i = 0; i < 8; i++) {
+        count += neighbors[i];
+    }
+    if (count < 3 || count > 5) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+void DetermineGameState(int *prev, int *post) {
+   temp = malloc(rows * sizeof *temp);
+   for(int i = 0; i < rows; i++)
+   {
+      temp[i] = malloc(cols * sizeof *temp[i]);
+   }
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < cols; j++)
+        {
+            temp[i][j] = DetermineState(i, j, prev, post);
+        }
+    }
+    work = temp;
+}
+
+/*
+    Prints the work matrix. 
+    "work" is the subsection of the game board that a single
+    process is responsible for. 
+*/
+void printShare()
+{
+    printf("RANK: %d\n", rank);
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < cols; j++)
+        {
+            printf("%d ", work[i][j]);
+        }
+        printf("\n");
+    }
+}
