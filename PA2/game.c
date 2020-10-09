@@ -120,7 +120,7 @@ void sendBack()
 int *generateNeighborList(int x, int y, int *prev, int *post) {
     int *neighbors = malloc(sizeof(int)*8);
     // Check boundaries.
-    if(x == 0 == p - 1)
+    if(x == 0 == rows - 1)
     {
         if (y > 0 && y < cols-1)
         { 
@@ -137,7 +137,7 @@ int *generateNeighborList(int x, int y, int *prev, int *post) {
         {
             neighbors[0] = prev[cols-1];
             neighbors[1] = prev[y];
-            neighbors[2] = prev][y+1];
+            neighbors[2] = prev[y+1];
             neighbors[3] = work[x][cols-1];
             neighbors[4] = work[x][y+1];
             neighbors[5] = post[cols-1];
@@ -155,7 +155,7 @@ int *generateNeighborList(int x, int y, int *prev, int *post) {
             neighbors[7] = post[0];
         }
     }
-    if (x > 0 && x < rows-1) {
+    else if (x > 0 && x < rows-1) {
         neighbors[1] = work[x-1][y];
         neighbors[6] = work[x+1][y];
         if (y > 0 && y < cols-1) {
