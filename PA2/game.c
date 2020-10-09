@@ -1,6 +1,6 @@
 #include "header.h"
 
-void GenerateInitialGoL(int bp, int **section)
+void GenerateInitialGoL(int bp, bool **section)
 {
     MPI_Status status;
     rows = n/p;
@@ -30,7 +30,7 @@ void GenerateInitialGoL(int bp, int **section)
 /*
     Send and recieve rows necessary for state computation. 
 */
-void sendRecvRows(int *prev, int *post)
+void sendRecvRows(bool *prev, bool *post)
 {
     for(int t = 0; t < p; t++)
     {   
@@ -54,7 +54,7 @@ void sendRecvRows(int *prev, int *post)
 /*
     Recieve both rows of matrix necessary for state computation for a single process.
 */
-void getRowsFromNeighbors(int *prev, int *post)
+void getRowsFromNeighbors(bool *prev, bool *post)
 {
     int back, front;
     back = rank - 1;
@@ -73,8 +73,8 @@ void getRowsFromNeighbors(int *prev, int *post)
         front = 0;
     }
 
-    MPI_Recv(prev, sizeof(int)*n, MPI_INT, back, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-    MPI_Recv(post, sizeof(int)*n, MPI_INT, front, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+    MPI_Recv(prev, sizeof(bool)*n, MPI_C_BOOL, back, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+    MPI_Recv(post, sizeof(bool)*n, MPI_C_BOOL, front, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 }
 
 /*
@@ -82,14 +82,14 @@ void getRowsFromNeighbors(int *prev, int *post)
 */
 void sendFwd()
 {
-    int *info = work[n/p - 1];
+    bool *info = work[n/p - 1];
     if (rank == p-1)
     {
-		MPI_Send(info, n, MPI_INT, 0, 0, MPI_COMM_WORLD);
+		MPI_Send(info, n, MPI_C_BOOL, 0, 0, MPI_COMM_WORLD);
     }
     else
     {
-		MPI_Send(info, n, MPI_INT, rank+1, 0, MPI_COMM_WORLD);
+		MPI_Send(info, n, MPI_C_BOOL, rank+1, 0, MPI_COMM_WORLD);
     }
 }
 
@@ -99,14 +99,14 @@ void sendFwd()
 */
 void sendBack()
 {
-    int *info = work[0];
+    bool *info = work[0];
     if (rank == 0)
     {
-		MPI_Send(info, n, MPI_INT, p-1, 0, MPI_COMM_WORLD);
+		MPI_Send(info, n, MPI_C_BOOL, p-1, 0, MPI_COMM_WORLD);
     }
     else
     {
-		MPI_Send(info, n, MPI_INT, rank-1, 0, MPI_COMM_WORLD);
+		MPI_Send(info, n, MPI_C_BOOL, rank-1, 0, MPI_COMM_WORLD);
     }
 }
 
@@ -117,8 +117,8 @@ void sendBack()
     5 6 7
     x = row, y = col
 */
-int *generateNeighborList(int x, int y, int *prev, int *post) {
-    int *neighbors = malloc(sizeof(int)*8);
+bool *generateNeighborList(int x, int y, bool *prev, bool *post) {
+    bool *neighbors = malloc(sizeof(bool)*8);
     // Check boundaries.
     if (x > 0 && x < rows-1) {
         neighbors[1] = work[x-1][y];
@@ -220,11 +220,12 @@ int *generateNeighborList(int x, int y, int *prev, int *post) {
     return neighbors;
 }
 
-int DetermineState(int x, int y, int *prev, int *post) {
-    int *neighbors = generateNeighborList(x,y,prev,post);
+int DetermineState(int x, int y, bool *prev, bool *post) {
+    bool *neighbors = generateNeighborList(x,y,prev,post);
     int count = 0;
     for (int i = 0; i < 8; i++) {
-        count += neighbors[i];
+        if (neighbors[i] == true)
+            count += 1;
     }
     if (count < 3 || count > 5) {
         return 0;
@@ -233,7 +234,7 @@ int DetermineState(int x, int y, int *prev, int *post) {
     }
 }
 
-void DetermineGameState(int *prev, int *post) {
+void DetermineGameState(bool *prev, bool *post) {
    temp = malloc(rows * sizeof *temp);
    for(int i = 0; i < rows; i++)
    {

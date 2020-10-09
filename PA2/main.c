@@ -41,11 +41,11 @@ int main(int argc,char *argv[])
 
    GenerateInitialGoL(bp, work);
 
-   int *prev, *post;
+   bool *prev, *post;
    gettimeofday(&totalRuntimeStart,NULL);
    for (int i = 0; i < g; i++) {
-      prev = malloc(sizeof(int)*n);
-      post = malloc(sizeof(int)*n);
+      prev = malloc(sizeof(bool)*n);
+      post = malloc(sizeof(bool)*n);
 
       gettimeofday(&totalCommTimeStart, NULL);
       sendRecvRows(prev, post);
