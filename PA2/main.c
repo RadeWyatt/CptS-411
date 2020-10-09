@@ -2,7 +2,6 @@
 
 int main(int argc,char *argv[])
 {
-
    int rseed;
    int bp = 93563;
 
@@ -39,8 +38,8 @@ int main(int argc,char *argv[])
    }
 
    int totalRuntime, totalCommTimes = 0;
-   printf("test\n");
    GenerateInitialGoL(bp, work);
+   printf("test");
    int *prev, *post;
 
    gettimeofday(&totalRuntimeStart,NULL);

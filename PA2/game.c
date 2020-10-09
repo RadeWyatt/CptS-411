@@ -9,17 +9,14 @@ void GenerateInitialGoL(int bp, int **section)
     int bp2 = bp*bp;
     srand(time(NULL));
     if(rank == 0){
-        for (int i = 1; i < p; i++)
+        for (int i = 0; i < p; i++)
         {
             randSeed = rand() % bp2 + 1;
             MPI_Send(&randSeed, sizeof(int), MPI_INT, i, 0, MPI_COMM_WORLD);
         }
         randSeed = rand() % bp2 + 1;
-    }
-    else
-    {
-        MPI_Recv(&randSeed, sizeof(int),MPI_INT, 0,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
-    }
+    } 
+    MPI_Recv(&randSeed, sizeof(int),MPI_INT, 0,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
 
     srand(randSeed);
     for(int i = 0; i < rows; i++)
@@ -37,8 +34,13 @@ void GenerateInitialGoL(int bp, int **section)
 void sendRecvRows(int *prev, int *post)
 {
     for(int t = 0; t < p; t++)
-    {
-        if (t == rank)
+    {   
+        if (t == rank && rank == 0 && p == 1) {
+            sendBack();
+            sendFwd();
+            getRowsFromNeighbors(prev, post);
+        }
+        else if (t == rank)
         {
             getRowsFromNeighbors(prev, post);
         }
@@ -66,7 +68,7 @@ void getRowsFromNeighbors(int *prev, int *post)
     if (rank == 0 && p == 1) {
         front = back = 0;
     }
-    else if(rank == 0)
+    else if (rank == 0)
     {
         back = p - 1;
     }
