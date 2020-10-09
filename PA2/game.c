@@ -284,3 +284,9 @@ void DisplayGoL() {
         }
     }
 }
+
+void DisplayTimingStats(int runtime, int commtime) {
+    int avgRuntime = runtime / g;
+    int totalCompTime = runtime - commtime;
+    printf("RANK= %d | TOTAL RUNTIME: %d \xC2\xB5s | AVG RUNTIME: %d \xC2\xB5s | TOTAL COMM TIME: %d \xC2\xB5s | TOTAL COMPUTATION TIME: %d \xC2\xB5s\n", rank, runtime, avgRuntime, commtime, totalCompTime);
+}

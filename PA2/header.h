@@ -3,8 +3,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
 #include <mpi.h>
 #include <time.h>
+
+// number of generations
+int g = 8;
 
 // Initialization
 void GenerateInitialGoL(int bp, int **section);
@@ -23,5 +27,6 @@ void DetermineGameState(int *prev, int *post);
 // Output
 void printShare();
 void DisplayGoL();
+void DisplayTimingStats(int runtime, int commtime);
 
 #endif
