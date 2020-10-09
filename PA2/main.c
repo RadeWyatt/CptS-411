@@ -9,12 +9,23 @@ int main(int argc,char *argv[])
    struct timeval totalRuntimeStart, totalRuntimeEnd;
    struct timeval totalCommTimeStart, totalCommTimeEnd;
    
-   // n x n  is is the size of the grid.  
-   n = 80;
-
    MPI_Init(&argc, &argv);
    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
    MPI_Comm_size(MPI_COMM_WORLD, &p);
+
+   // Validate arguments, g = # of generations && n = size of matrix
+   if (argc < 2) {
+      printf("Not enough arguments to program.\n");
+      MPI_Finalize();
+      return 0;
+   } else if (argc == 2) {
+      n = atoi(argv[1]); // Size of matrix.
+      if (n % p != 0) {
+         printf("Invalid matrix size for %d processes\n", p);
+         MPI_Finalize();
+         return 0;
+      }
+   }
 
    int rows = n / p;
 
@@ -28,9 +39,8 @@ int main(int argc,char *argv[])
    }
 
    int totalRuntime, totalCommTimes = 0;
-
+   printf("test\n");
    GenerateInitialGoL(bp, work);
-
    int *prev, *post;
 
    gettimeofday(&totalRuntimeStart,NULL);

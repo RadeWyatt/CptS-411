@@ -7,8 +7,9 @@
 #include <mpi.h>
 #include <time.h>
 
-// number of generations
-int g = 8;
+
+int p, n, rank, rows, cols, **work, **temp;
+int g = 10;
 
 // Initialization
 void GenerateInitialGoL(int bp, int **section);

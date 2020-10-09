@@ -1,7 +1,5 @@
 #include "header.h"
 
-int p, n, rank, rows, cols, **work, **temp;
-
 void GenerateInitialGoL(int bp, int **section)
 {
     MPI_Status status;
@@ -64,14 +62,18 @@ void getRowsFromNeighbors(int *prev, int *post)
     back = rank - 1;
     front = rank + 1;
     MPI_Status status;
-    if(rank == 0)
+
+    if (rank == 0 && p == 1) {
+        front = back = 0;
+    }
+    else if(rank == 0)
     {
         back = p - 1;
     }
     else if (rank == p-1)
     {
         front = 0;
-    } 
+    }
 
     MPI_Recv(prev, sizeof(int)*n, MPI_INT, back, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
     MPI_Recv(post, sizeof(int)*n, MPI_INT, front, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
