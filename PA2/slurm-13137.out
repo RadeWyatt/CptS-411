@@ -1,0 +1,62 @@
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+[n0004:202767] *** Process received signal ***
+[n0004:202767] Signal: Segmentation fault (11)
+[n0004:202767] Signal code: Address not mapped (1)
+[n0004:202767] Failing at address: (nil)
+[n0004:202767] [ 0] /lib/x86_64-linux-gnu/libc.so.6(+0x46210)[0x7f6847d58210]
+[n0004:202767] [ 1] /home/rade.pilkinton/CptS-411/PA2/yezzir(+0x1d1b)[0x564a5b798d1b]
+[n0004:202767] [ 2] /home/rade.pilkinton/CptS-411/PA2/yezzir(+0x2443)[0x564a5b799443]
+[n0004:202767] [ 3] /home/rade.pilkinton/CptS-411/PA2/yezzir(+0x2573)[0x564a5b799573]
+[n0004:202767] [ 4] /home/rade.pilkinton/CptS-411/PA2/yezzir(+0x2b84)[0x564a5b799b84]
+[n0004:202767] [ 5] /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf3)[0x7f6847d390b3]
+[n0004:202767] [ 6] /home/rade.pilkinton/CptS-411/PA2/yezzir(+0x12ae)[0x564a5b7982ae]
+[n0004:202767] *** End of error message ***
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+WARNING: Open MPI failed to TCP connect to a peer MPI process.  This
+should not happen.
+
+Your Open MPI job may now hang or fail.
+
+  Local host: n0002
+  PID:        370429
+  Message:    connect() to 10.44.1.104:1031 failed
+  Error:      Operation now in progress (115)
+--------------------------------------------------------------------------
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+1 32
+--------------------------------------------------------------------------
+mpirun noticed that process rank 23 with PID 202767 on node n0004 exited on signal 11 (Segmentation fault).
+--------------------------------------------------------------------------

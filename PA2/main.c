@@ -38,10 +38,10 @@ int main(int argc,char *argv[])
    }
 
    int totalRuntime, totalCommTimes = 0;
-   GenerateInitialGoL(bp, work);
-   printf("test");
-   int *prev, *post;
 
+   GenerateInitialGoL(bp, work);
+
+   int *prev, *post;
    gettimeofday(&totalRuntimeStart,NULL);
    for (int i = 0; i < g; i++) {
       prev = malloc(sizeof(int)*n);
@@ -49,6 +49,7 @@ int main(int argc,char *argv[])
 
       gettimeofday(&totalCommTimeStart, NULL);
       sendRecvRows(prev, post);
+      MPI_Barrier(MPI_COMM_WORLD);
       gettimeofday(&totalCommTimeEnd, NULL);
       totalCommTimes += (totalCommTimeEnd.tv_sec-totalCommTimeStart.tv_sec)*1000000 + (totalCommTimeEnd.tv_usec-totalCommTimeStart.tv_usec);
 
@@ -60,9 +61,9 @@ int main(int argc,char *argv[])
    gettimeofday(&totalRuntimeEnd,NULL);
    totalRuntime = (totalRuntimeEnd.tv_sec-totalRuntimeStart.tv_sec)*1000000 + (totalRuntimeEnd.tv_usec-totalRuntimeStart.tv_usec);
 
-   DisplayTimingStats(totalRuntime, totalCommTimes);
+   free(work);
 
-   // DisplayGoL();
+   DisplayTimingStats(totalRuntime, totalCommTimes);
 
    MPI_Finalize();
 }

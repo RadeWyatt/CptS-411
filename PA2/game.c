@@ -14,7 +14,6 @@ void GenerateInitialGoL(int bp, int **section)
             randSeed = rand() % bp2 + 1;
             MPI_Send(&randSeed, sizeof(int), MPI_INT, i, 0, MPI_COMM_WORLD);
         }
-        randSeed = rand() % bp2 + 1;
     } 
     MPI_Recv(&randSeed, sizeof(int),MPI_INT, 0,MPI_ANY_TAG,MPI_COMM_WORLD,&status);
 
@@ -39,18 +38,15 @@ void sendRecvRows(int *prev, int *post)
             sendBack();
             sendFwd();
             getRowsFromNeighbors(prev, post);
-        }
-        else if (t == rank)
-        {
-            getRowsFromNeighbors(prev, post);
-        }
-        else if (rank == t-1 || (t == 0 && rank == p-1))
-        {
+        } 
+        if (rank == t-1 || (t == 0 && rank == p-1)) {
             sendFwd();
-        }
-        else if (rank == t+1 || (t==p-1 && rank == 0))
-        {
+        } 
+        if (rank == t+1 || (t==p-1 && rank == 0)) {
             sendBack();
+        } 
+        if (t == rank) {
+            getRowsFromNeighbors(prev, post);
         }
     }
 }

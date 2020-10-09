@@ -7,7 +7,6 @@
 #include <mpi.h>
 #include <time.h>
 
-
 int p, n, rank, rows, cols, **work, **temp;
 int g = 10;
 
