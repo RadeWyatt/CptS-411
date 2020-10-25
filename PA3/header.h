@@ -7,8 +7,12 @@
 #include <mpi.h>
 #include <time.h>
 
+int p, n, *A, x, rank;
+MPI_Status status;
+
 void MyAllReduce();
 void NaiveAllReduce();
 void MPILibraryAllReduce();
+void GenerateArray();
 
 #endif
