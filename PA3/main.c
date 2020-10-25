@@ -22,9 +22,13 @@ int main(int argc,char *argv[])
    }
 
    GenerateArray();
+   AddLocal();
    NaiveAllReduce();
 
-   printf("rank %d answer %d", rank, x);
+   printf("rank %d answer %d\n", rank, g);
+   MPILibraryAllReduce();
+   
+   printf("rank %d answer %d library\n", rank, g);
 
    MPI_Finalize();
 
