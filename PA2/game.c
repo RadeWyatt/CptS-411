@@ -120,42 +120,7 @@ void sendBack()
 int *generateNeighborList(int x, int y, int *prev, int *post) {
     int *neighbors = malloc(sizeof(int)*8);
     // Check boundaries.
-    if(x == 0 == rows - 1)
-    {
-        if (y > 0 && y < cols-1)
-        { 
-            neighbors[0] = prev[y-1];
-            neighbors[1] = prev[y];
-            neighbors[2] = prev[y+1];
-            neighbors[3] = work[x][y-1];
-            neighbors[4] = work[x][y+1];
-            neighbors[5] = post[y-1];
-            neighbors[6] = post[y];
-            neighbors[7] = post[y+1];
-        }
-        else if(y == 0)
-        {
-            neighbors[0] = prev[cols-1];
-            neighbors[1] = prev[y];
-            neighbors[2] = prev[y+1];
-            neighbors[3] = work[x][cols-1];
-            neighbors[4] = work[x][y+1];
-            neighbors[5] = post[cols-1];
-            neighbors[6] = post[y];
-            neighbors[7] = post[y+1];
-        }
-        else{
-            neighbors[0] = prev[y-1];
-            neighbors[1] = prev[y];
-            neighbors[2] = prev[0];
-            neighbors[3] = work[x][y-1];
-            neighbors[4] = work[x][0];
-            neighbors[5] = post[y-1];
-            neighbors[6] = post[y];
-            neighbors[7] = post[0];
-        }
-    }
-    else if (x > 0 && x < rows-1) {
+    if (x > 0 && x < rows-1) {
         neighbors[1] = work[x-1][y];
         neighbors[6] = work[x+1][y];
         if (y > 0 && y < cols-1) {
@@ -183,28 +148,48 @@ int *generateNeighborList(int x, int y, int *prev, int *post) {
         }
     } else if (x == 0) {
         neighbors[1] = prev[y];
-        neighbors[6] = work[x+1][y];
         if (y > 0 && y < cols-1) {
             neighbors[0] = prev[y-1];
             neighbors[2] = prev[y+1];
             neighbors[3] = work[x][y-1];
             neighbors[4] = work[x][y+1];
-            neighbors[5] = work[x+1][y-1];
-            neighbors[7] = work[x+1][y+1];
+            if (rows == 1) {
+                neighbors[5] = post[y-1];
+                neighbors[6] = post[y];
+                neighbors[7] = post[y+1];
+            } else {
+                neighbors[5] = work[x+1][y-1];
+                neighbors[6] = work[x+1][y];
+                neighbors[7] = work[x+1][y+1];
+            }
         } else if (y == 0) {
             neighbors[0] = prev[cols-1];
             neighbors[2] = prev[y+1];
             neighbors[3] = work[x][cols-1];
             neighbors[4] = work[x][y+1];
-            neighbors[5] = work[x+1][cols-1];
-            neighbors[7] = work[x+1][y+1];
+            if (rows == 1) {
+                neighbors[5] = post[cols-1];
+                neighbors[6] = post[y];
+                neighbors[7] = post[y+1];
+            } else {
+                neighbors[5] = work[x+1][cols-1];
+                neighbors[6] = work[x+1][y];
+                neighbors[7] = work[x+1][y+1];
+            }
         } else {
             neighbors[0] = prev[y-1];
             neighbors[2] = prev[0];
             neighbors[3] = work[x][y-1];
             neighbors[4] = work[x][0];
-            neighbors[5] = work[x+1][y-1];
-            neighbors[7] = work[x+1][0];
+            if (rows == 1) {
+                neighbors[5] = post[y-1];
+                neighbors[6] = post[y];
+                neighbors[7] = post[0];
+            } else {
+                neighbors[5] = work[x+1][y-1];
+                neighbors[6] = work[x+1][y];
+                neighbors[7] = work[x+1][0];
+            }
         }
     } else {
         neighbors[1] = work[x-1][y];
