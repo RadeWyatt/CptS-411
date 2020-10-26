@@ -56,5 +56,27 @@ void MPILibraryAllReduce()
 
 void MyAllReduce()
 {
-    
+    int temp = x;
+    int recvtemp, partner;
+    g = 0;
+    for (int t = 0; t < log2(p); t++)
+    {
+        partner = determinePartner(t);
+        MPI_Sendrecv(&temp, 1, MPI_INT, partner, 0, &recvtemp, 1, MPI_INT, partner, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+        temp += recvtemp;
+    }
+    g = temp;
+}
+
+int determinePartner(int t)
+{
+    return power(2, t) ^ rank;
+}
+
+// power function that works for type int. 
+int power(int base, unsigned int exp) {
+    int i, result = 1;
+    for (i = 0; i < exp; i++)
+        result *= base;
+    return result;
 }

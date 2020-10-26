@@ -6,6 +6,7 @@
 #include <sys/time.h>
 #include <mpi.h>
 #include <time.h>
+#include <math.h>
 
 int p, n, *A, x, rank, g;
 MPI_Status status;
@@ -15,5 +16,7 @@ void NaiveAllReduce();
 void MPILibraryAllReduce();
 void GenerateArray();
 void AddLocal();
+int determinePartner(int t);
+int power(int base, unsigned int exp);
 
 #endif
