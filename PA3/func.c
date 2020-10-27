@@ -30,7 +30,7 @@ void AddLocal()
 
 void NaiveAllReduce()
 {
-    g = 0;
+    g0 = 0;
     int temprecv, temp = x;
     for(int t = 0; t < p-1; t++)
     {
@@ -44,37 +44,37 @@ void NaiveAllReduce()
             temp += temprecv;
         }
     }
-    g = temp;
+    g0 = temp;
     for(int t = p-1; t > 0; t--)
     {
         if(rank == t && rank != 0)
         {
-            MPI_Send(&g, 1, MPI_INT, t - 1, 0, MPI_COMM_WORLD);
+            MPI_Send(&g0, 1, MPI_INT, t - 1, 0, MPI_COMM_WORLD);
         }
         else if(rank == t-1)
         {
-            MPI_Recv(&g, 1, MPI_INT, t, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+            MPI_Recv(&g0, 1, MPI_INT, t, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         }
     }
 }
 
 void MPILibraryAllReduce()
 {
-    MPI_Allreduce(&x, &g, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(&x, &g1, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 }
 
 void MyAllReduce()
 {
     int temp = x;
     int recvtemp, partner;
-    g = 0;
+    g2 = 0;
     for (int t = 0; t < log2(p); t++)
     {
         partner = determinePartner(t);
         MPI_Sendrecv(&temp, 1, MPI_INT, partner, 0, &recvtemp, 1, MPI_INT, partner, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         temp += recvtemp;
     }
-    g = temp;
+    g2 = temp;
 }
 
 int determinePartner(int t)

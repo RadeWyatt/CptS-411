@@ -8,7 +8,7 @@
 #include <time.h>
 #include <math.h>
 
-int p, n, *A, x, rank, g;
+int p, n, *A, x, rank, g0, g1, g2;
 int *naiveTimes, *myTimes, *libraryTimes;
 
 MPI_Status status;

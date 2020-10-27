@@ -77,6 +77,9 @@ int main(int argc,char *argv[])
 
    // print max times values for each implementation
    if (rank == 0) {
+      printf("NAIVE SUM: %d\n", g0);
+      printf("LIBRARY SUM: %d\n", g1);
+      printf("MY SUM: %d\n\n\n", g2);
       printf("MAX NAIVE TIME: %d\n", getMax(naiveTimes));
       printf("MAX LIBRARY TIME: %d\n", getMax(libraryTimes));
       printf("MAX MY TIME: %d\n", getMax(myTimes));
