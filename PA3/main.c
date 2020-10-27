@@ -32,22 +32,24 @@ int main(int argc,char *argv[])
    }
 
    GenerateArray();
-   AddLocal();
 
    //time for naive reduce
    gettimeofday(&startNaive,NULL);
+   AddLocal();
    NaiveAllReduce();
    gettimeofday(&endNaive,NULL);
    timeNaive = (endNaive.tv_sec-startNaive.tv_sec)*1000000 + (endNaive.tv_usec-startNaive.tv_usec);
 
    //time for library all reduce
    gettimeofday(&startLibrary,NULL);
+   AddLocal();
    MPILibraryAllReduce();
    gettimeofday(&endLibrary, NULL);
    timeLibrary = (endLibrary.tv_sec-startLibrary.tv_sec)*1000000 + (endLibrary.tv_usec-startLibrary.tv_usec);
 
    //time for my all reduce
    gettimeofday(&startMine,NULL);
+   AddLocal();
    MyAllReduce();
    gettimeofday(&endMine,NULL);
    timeMine = (endMine.tv_sec-startMine.tv_sec)*1000000 + (endMine.tv_usec-startMine.tv_usec);
