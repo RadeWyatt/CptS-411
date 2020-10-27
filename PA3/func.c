@@ -1,5 +1,14 @@
 #include "header.h"
 
+int getMax(int *arr) {
+    int temp = 0;
+    for (int i = 0; i < p; i++) {
+        if (arr[i] > temp)
+            temp = arr[i];
+    }
+    return temp;
+}
+
 void GenerateArray()
 {
     A = malloc(sizeof(int) * (n/p));

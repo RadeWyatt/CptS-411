@@ -9,6 +9,8 @@
 #include <math.h>
 
 int p, n, *A, x, rank, g;
+int *naiveTimes, *myTimes, *libraryTimes;
+
 MPI_Status status;
 
 void MyAllReduce();

@@ -11,7 +11,7 @@
 #this is the command to execute your parallel program
 
 # Note that my helloworld resides on this path. You need to change the path where your executable resides
-mpirun ~/pas/CptS-411/PA3/yezzir 4
+mpirun ~/CptS-411/PA3/yezzir 131072
 
 
 
