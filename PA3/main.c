@@ -33,6 +33,9 @@ int main(int argc,char *argv[])
 
    GenerateArray();
 
+   // burner all reduce call
+   MPILibraryAllReduce();
+
    //time for naive reduce
    gettimeofday(&startNaive,NULL);
    AddLocal();
