@@ -1,3 +1,3 @@
 #!/bin/sh
 
-mpirun ~/CptS-411/PA4/yezzir 10 1
+~/CptS-411/PA4/yezzir 14 1
