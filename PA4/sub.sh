@@ -1,3 +1,14 @@
 #!/bin/sh
+N=8388608
+N2=16777216
+N3=33554432
+N4=67108864
+N5=134217728
+N6=268435456
 
-~/CptS-411/PA4/yezzir 14 1
+~/CptS-411/PA4/yezzir $N 1
+~/CptS-411/PA4/yezzir $N2 2
+~/CptS-411/PA4/yezzir $N3 4
+~/CptS-411/PA4/yezzir $N4 8
+~/CptS-411/PA4/yezzir $N5 16
+~/CptS-411/PA4/yezzir $N6 32

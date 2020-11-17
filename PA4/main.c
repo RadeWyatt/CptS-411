@@ -5,6 +5,7 @@
 #include <math.h>
 #include <assert.h>
 
+// get distance between point (x,y) and point (0.5,0.5)
 double getDistance(double x, double y) {
     double x1 = x - 0.5;
     double y1 = y - 0.5;
@@ -37,33 +38,36 @@ int main(int argc,char *argv[])
 		int rank = omp_get_thread_num();
 	} 
 
-	// printf("Debug: sizeof pointer= %ld bytes \n",sizeof(int *));
-
-    struct drand48_data buffer;
-    srand48_r ((unsigned) time(NULL), &buffer);
-
-    double x, y;
     double count = 0.0;
 	double runtime = omp_get_wtime();
-	#pragma omp parallel for schedule(static) reduction(+:count)	//creates N threads to run the next enclosed block 
-	for(i = 0; i < loops; i++)  // or line in parallel
-	{	
-		drand48_r(&buffer, &x);
-        drand48_r(&buffer, &y);
-        int rank = omp_get_thread_num();
-        //printf("POINT %lld: (%f, %f)     Rank = %d\n", i, x, y, rank);
-        if (getDistance(x, y) <= 0.5) { // in the circle
-            count++;
-        }
+	#pragma omp parallel default(none) reduction(+:count) shared(loops) private(i)
+	{
+		struct drand48_data buffer;
+		int rank = omp_get_thread_num();
+		srand48_r((rank+1) * time(0), &buffer);
+
+		#pragma omp for
+		for(i = 0; i < loops; i++) 
+		{	
+			double x, y;
+			int rank = omp_get_thread_num();
+			drand48_r(&buffer, &x);
+			drand48_r(&buffer, &y);
+			if (getDistance(x, y) <= 0.5) { 
+				count++;
+			}
+		}		
 	}
-	// end of the second parallel region for FOR LOOP
-	
 	runtime = omp_get_wtime() - runtime;
-	printf("\n %f seconds \n", runtime);
+
+	// end of the second parallel region for FOR LOOP
+	printf("\n%f seconds \n", runtime);
 
     double pi = 4 * (count / (double)loops);
 
-    printf("PI = %f\n", pi);
+    printf("PI = %.20f\n", pi);
+	printf("HITS: %f\nTOTAL SHOTS: %lld\n", count, loops);
+	printf("************************************************\n");
 
 	return 0;
 }
