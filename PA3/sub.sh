@@ -11,12 +11,7 @@
 #this is the command to execute your parallel program
 
 # Note that my helloworld resides on this path. You need to change the path where your executable resides
-counter = 1
-while[$counter -le 512]
-do
-mpirun ~/CptS-411/srtest $counter
-((counter*=2))
-done
+mpirun ~/CptS-411/PA3/yezzir 2097152
 
 
 
